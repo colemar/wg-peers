@@ -13,7 +13,9 @@ main () {
   # Find Wireguard interface
   if=$(wg show interfaces)
   [[ $if =~ ' ' ]] && { echo "WARNING: multiple Wireguard interfaces detected"; }
-  read -r INTERFACE rest <<<$if; readonly INTERFACE
+  for k in $if; do [[ $k =~ wg[0-9]+ ]] && break; done
+  [[ $k =~ wg[0-9]+ ]] || { echo "ERROR: Cannot find any Wireguard interface named wg*"; return 1; }
+  readonly INTERFACE=$k
   echo "Using interface $INTERFACE"
 
   case $1 in
